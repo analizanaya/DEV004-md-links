@@ -1,6 +1,7 @@
 const fs = require('fs');
 const pathUser = require('path');
 const markdownLinkExtractor = require('markdown-link-extractor');
+const api = require('./api');
 
 const mdLinks = (path, options) => {
   //resolve es como "then" y reject es como "catch". Son callbacks. Promesa resuelta y rechazada.
@@ -8,9 +9,7 @@ const mdLinks = (path, options) => {
     //identificar si la ruta existe
     if (fs.existsSync(path)) {
       //leer y convertir a ruta absoluta
-      if (!pathUser.isAbsolute(path)) {
-        path = pathUser.resolve(path)
-      }
+      path = api.getAbsolutePath(path);
     } else {
       //si no existe la ruta, rechaza la promesa
       reject('La ruta no existe');
@@ -22,12 +21,15 @@ const mdLinks = (path, options) => {
     if (directory.length === 0) {
       reject('El directorio está vacío');
     } else {
-      foundMd = false;
+      // La expresión "for...of" se utiliza para iterar sobre elementos de un objeto iterable. En este caso, "directory" probablemente se refiere a un objeto que contiene 
+      // una lista de archivos, y "file" es una variable que se utilizará para hacer referencia a cada elemento en la lista de archivos mientras se itera sobre ella.
       for (let file of directory) {
         const filePath = pathUser.join(path, file);
         // El método fs.statSync() se utiliza para devolver información sobre la ruta del archivo dada de forma síncrona.
+
         const fileStat = fs.statSync(filePath);
         // ¿Es un archivo?
+
         if (fileStat.isFile()) {
           const ext = pathUser.extname(filePath);
           // ¿Es un archivo .md?
@@ -60,6 +62,7 @@ const mdLinks = (path, options) => {
               console.log(err);
             });
         }
+
       }
     }
 
@@ -68,7 +71,6 @@ const mdLinks = (path, options) => {
     }
   })
 }
+
 // module puede exportar objetos, funciones, etc.
-module.exports = {
-  mdLinks
-}; 
+module.exports = mdLinks; 
