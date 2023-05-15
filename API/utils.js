@@ -9,10 +9,10 @@ const normalizePath = (route) => path.normalize(route);
 // const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
 
 const validatePath = (route) => {
-    const pathNormalize = utilsMd.normalizePath(route);
+    const pathNormalize = pathUser.normalizePath(route);
     // condición ? valor si verdadero : valor si falso
     // pathUser.resolve convierte la ruta en absoluta
-    const existingpath = utilsMd.pathExists(pathNormalize) ? pathUser.resolve(pathNormalize) : false;
+    const existingpath = pathUser.pathExists(pathNormalize) ? pathUser.resolve(pathNormalize) : false;
     return existingpath;
 };
 

@@ -1,7 +1,6 @@
 const fs = require('fs');
 const pathUser = require('path');
-const markdownLinkExtractor = require('markdown-link-extractor');
-const functionUser = require('./functions.js');
+//const markdownLinkExtractor = require('markdown-link-extractor');
 const utils = require('./utils.js');
 const mdLink = require('./cli.js')
 
@@ -11,7 +10,7 @@ const mdLinks = (path, options) => {
   //resolve es como "then" y reject es como "catch". Son callbacks. Promesa resuelta y rechazada.
   return new Promise((resolve, reject) => {
     //identificar si la ruta existe
-    const pathValid = functionUser.validatePath(path);
+    const pathValid = utils.validatePath(path);
     console.log({ pathValid })
     if (pathValid) {
       console.log('Existing path')
