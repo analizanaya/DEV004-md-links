@@ -1,5 +1,5 @@
 const mdLinks = require('./index.js');
-mdLinks('./README.md').then((resultado) => {
+mdLinks('./readme').then((resultado) => {
     console.log(resultado);
 })
     .catch((error) => {

@@ -9,11 +9,28 @@ const normalizePath = (route) => path.normalize(route);
 // const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
 
 const validatePath = (route) => {
-    const pathNormalize = pathUser.normalizePath(route);
+
+    //retrna una promesa
+    return new Promise((resolve, reject) => {
+        fs.stat(route, (err, stats) => {
+            if (stats) {
+                resolve(true)
+            } else {
+                //no existe
+                //reject
+                resolve(false)
+            }
+
+            return stats
+        })
+    });
+
     // condición ? valor si verdadero : valor si falso
     // pathUser.resolve convierte la ruta en absoluta
-    const existingpath = pathUser.pathExists(pathNormalize) ? pathUser.resolve(pathNormalize) : false;
-    return existingpath;
+
+
+    /* ? pathUser.resolve(route) : false;
+    return existingpath; */
 };
 
 // Es un archivo
@@ -61,10 +78,21 @@ const readFiles = () => {
     })
 }
 
-
-
 // Es un directorio
-const isDirectory = (route) => fs.statSync(route).isDirectory();
+const validateDirectory = (route) => {
+    return new Promise((resolve, reject) => {
+        fs.stat(route, (err, stats) => {
+            if (err) {
+                // Error al obtener información del archivo o directorio
+                reject(err);
+            } else {
+                resolve(stats.isDirectory());
+            }
+        });
+    })
+}
+
+
 // Path/ruta existe
 const pathExists = (route) => fs.existsSync(route);
 // Leer el contenido del directorio 
@@ -76,7 +104,7 @@ module.exports = {
     isFile,
     isMdFile,
     readFiles,
-    isDirectory,
+    validateDirectory,
     pathExists,
     readDir
 };
