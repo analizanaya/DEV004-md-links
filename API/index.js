@@ -3,6 +3,7 @@ const pathUser = require('path');
 const markdownLinkExtractor = require('markdown-link-extractor');
 const functionUser = require('./functions.js');
 const utils = require('./utils.js');
+const mdLink = require('./cli.js')
 
 
 const mdLinks = (path, options) => {
@@ -26,10 +27,15 @@ const mdLinks = (path, options) => {
     if (utils.isFile(path) && utils.isMdFile(path)) {
 
     }
+    const fileRead = utils.readFiles(path);
+    if (fileRead) {
+      console.log("Files are being read..." + fileRead);
+    }
     // leer archivos readFile
 
-    const links = markdownLinkExtractor(pathValid);
-    // dataFile.match(/https:\/\/[^\s]+/g)
+    //const links = markdownLinkExtractor(pathValid);
+    const dataFile = utils.readFiles(path);
+
 
     if (links.length === 0) {
       reject('No links found in the MD file');
