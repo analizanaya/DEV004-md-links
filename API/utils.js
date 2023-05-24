@@ -58,30 +58,25 @@ const filePath = './README.md'
 const regex = /https:\/\/[^\s]+/g;
 
 // Leer el archivo
-const readFiles = () => {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
+const readFiles = (path) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(path, 'utf8', (err, data) => {
+            if (err) {
+                reject(err);
+                return;
+            }
 
-        // Buscar coincidencias en el contenido del archivo
-        const matches = data.match(regex);
-
-        // Hacer algo con las coincidencias encontradas
-        if (matches) {
-            console.log('Matches found:');
-            console.log(matches);
-        } else {
-            console.log('No matches found.');
-        }
-    })
-}
+            const matches = data.match(regex);
+            resolve(matches || []);
+        });
+    });
+};
 
 // Es un directorio
 const validateDirectory = (route) => {
     return new Promise((resolve, reject) => {
         fs.stat(route, (err, stats) => {
+
             if (err) {
                 // Error al obtener información del archivo o directorio
                 reject(err);
