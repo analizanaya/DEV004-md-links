@@ -8,49 +8,52 @@ const mdLinks = (path, options) => {
       .then((isValid) => {
         console.log(isValid);
 
-        if (!isValid) {
-          reject('Path does not exist');
-          return;
+        const rutaAbsoluta = utils.solveToAbsolute(path);
+        console.log("rutaAbsoluta: ", rutaAbsoluta)
+
+
+        /* utils.validateDirectory(rutaAbsoluta)
+          .then((directoryExist) => {
+            console.log(directoryExist); */
+
+        if (utils.isFile(rutaAbsoluta) && utils.isMdFile(rutaAbsoluta)) {
+          utils.readFiles(rutaAbsoluta)
+            .then((fileContent) => {
+              console.log("File content:", fileContent);
+
+              resolve();
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        } /* else if (!directoryExist) {
+          reject('Directory does not exist');
+
+        } */
+        else {
+          reject('Invalid file path or file extension');
         }
 
-        utils.validateDirectory(path)
-          .then((directoryExist) => {
-            console.log(directoryExist);
+        const directory = utils.readDir(path);
 
-            if (!directoryExist) {
-              reject('Directory does not exist');
-              return;
-            }
+        if (directory.length === 0) {
+          reject('Empty directory');
 
-            const directory = utils.readDir(path);
+        }
+        //poner en else linea 22
 
-            if (directory.length === 0) {
-              reject('Empty directory');
-              return;
-            }
 
-            if (utils.isFile(path) && utils.isMdFile(path)) {
-              utils.readFiles(path)
-                .then((fileContent) => {
-                  console.log("File content:", fileContent);
-
-                  resolve();
-                })
-                .catch((error) => {
-                  reject(error);
-                });
-            } else {
-              reject('Invalid file path or file extension');
-            }
-          })
-          .catch((error) => {
-            reject(error);
-          });
       })
       .catch((error) => {
         reject(error);
       });
-  });
+  })
+  /*  .catch((error) => {
+     reject(error);
+   }); */
 };
 
+
 module.exports = mdLinks;
+
+//cambiar console.log por resolve o reject

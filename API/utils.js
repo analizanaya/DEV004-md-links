@@ -6,7 +6,7 @@ const pathUser = require('path');
 // normalizar/estandarizar la forma en que se representa una ruta de archivo.
 const normalizePath = (route) => path.normalize(route);
 // Convertir a ruta absoluta
-// const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
+const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
 
 const validatePath = (route) => {
 
@@ -17,8 +17,7 @@ const validatePath = (route) => {
                 resolve(true)
             } else {
                 //no existe
-                //reject
-                resolve(false)
+                reject(false)
             }
 
             return stats
@@ -48,11 +47,6 @@ const isFile = (route) => {
 };
 // Es un archivo .md
 const isMdFile = (route) => (path.extname(route) === '.md');
-
-// Leer archivo
-// Ruta al archivo que deseas leer
-const filePath = './README.md'
-//'/ruta/al/archivo.txt';
 
 // Expresión regular para buscar coincidencias
 const regex = /https:\/\/[^\s]+/g;
@@ -99,6 +93,7 @@ module.exports = {
     isFile,
     isMdFile,
     readFiles,
+    solveToAbsolute,
     validateDirectory,
     pathExists,
     readDir
