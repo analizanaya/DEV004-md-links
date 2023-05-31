@@ -113,5 +113,6 @@ module.exports = {
     solveToAbsolute,
     validateDirectory,
     validateLinks,
-    getStats
+    getStats,
+    getUniqueLinks
 };

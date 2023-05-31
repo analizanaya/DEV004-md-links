@@ -4,15 +4,11 @@ const mdLinks = (path, options) => {
   return new Promise((resolve, reject) => {
     utils.validatePath(path)
       .then((isValid) => {
-        console.log(isValid);
         const absolutePath = utils.solveToAbsolute(path);
-        console.log('absolutePath: ', absolutePath);
 
         if (utils.isFile(absolutePath) && utils.isMdFile(absolutePath)) {
           utils.readFiles(absolutePath)
             .then((fileContent) => {
-              console.log('File content:', fileContent);
-
               const links = fileContent.map((match) => {
                 const regex = /\[(.*)\]\(((?!#).+)\)/i;
                 const [, text, href] = match.match(regex);
@@ -23,14 +19,14 @@ const mdLinks = (path, options) => {
                 };
               });
 
-              if (options.validate) {
-                utils.validateLinks(links)
-                  .then((result) => {
-                    console.log(result);
-                  })
-
+              if (options.validate && options.stats) {
+                validateAndStats(links, resolve, reject);
+              } else if (options.validate) {
+                validate(links, resolve, reject);
+              } else if (options.stats) {
+                getStats(links, resolve, reject);
               } else {
-                resolve(links);
+                resolve({ links });
               }
             })
             .catch((error) => {
@@ -40,9 +36,40 @@ const mdLinks = (path, options) => {
           reject('Invalid file path or file extension');
         }
       })
+      .catch((error) => {
+        reject(error);
+      });
   });
 };
 
-module.exports = mdLinks;
+const validateAndStats = (links, resolve, reject) => {
+  utils.validateLinks(links)
+    .then((result) => {
+      const stats = getStats(result);
+      const brokenLinks = result.filter(link => link.status !== 200);
+      resolve({ links: result, stats, broken: brokenLinks.length });
+    })
+    .catch((error) => {
+      reject(error);
+    });
+};
 
-//cambiar console.log por resolve o reject
+const validate = (links, resolve, reject) => {
+  utils.validateLinks(links)
+    .then((result) => {
+      resolve({ links: result });
+    })
+    .catch((error) => {
+      reject(error);
+    });
+};
+
+const getStats = (links) => {
+  const stats = {
+    total: links.length,
+    unique: utils.getUniqueLinks(links).length,
+  };
+  return stats;
+};
+
+module.exports = mdLinks;

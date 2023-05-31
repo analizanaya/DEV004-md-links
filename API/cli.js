@@ -1,4 +1,3 @@
-
 const mdLinksCLI = require('./index.js');
 
 const path = './readme/README.md';
