@@ -46,9 +46,6 @@ const isFile = (route) => {
 // Es un archivo .md
 const isMdFile = (route) => (path.extname(route) === '.md');
 
-// Expresión regular para buscar coincidencias
-const regex = /https:\/\/[^\s]+/g;
-
 // Leer el archivo
 const readFiles = (path) => {
     return new Promise((resolve, reject) => {
@@ -57,7 +54,7 @@ const readFiles = (path) => {
                 reject(err);
                 return;
             }
-
+            const regex = /\[(.*)\]\(((?!#).+)\)/gi;
             const matches = data.match(regex);
             resolve(matches || []);
         });
@@ -65,7 +62,7 @@ const readFiles = (path) => {
 };
 
 
-axios.get('https://axios-http.com/docs/example')
+/* axios.get('./readme')
     .then(function (response) {
         console.log({ response });
     })
@@ -96,8 +93,7 @@ const getAllFiles = (route) => {
 // Se obtiene todos los enlaces de archivos md,devuelve un array de objeto
 const searchLinks = (route) => {
     const arrayLink = [];
-    const absolutePath = solveToAbsolute(route);
-    getAllFiles(absolutePath).forEach((file) => {
+    getAllFiles(solveToAbsolute).forEach((file) => {
         const regExp = /\[(.*)\]\(((?!#).+)\)/gi;
         // match() => para obtener todas las ocurrencias de una expresión regular dentro de una cadena.
         // split() => divide un objeto de tipo String en un array.Especifica donde realizar cada corte.
@@ -134,8 +130,43 @@ const validateLinks = (arrLiknsValidate) => {
             message: 'FAIL',
         })));
     return Promise.all(arr);
-};
+}; */
+// Peticion HTTP
+/* const validateLink = (link) => {
+    return axios.get(link)
+        .then((response) => {
+            return {
+                status: response.status,
+                message: response.statusText,
+            };
+        })
+        .catch((error) => {
+            return {
+                status: error.response ? error.response.status : null,
+                message: error.response ? error.response.statusText : 'FAIL',
+            };
+        });
+}; */
 
+const validateLinks = (arrLinksValidate) => {
+    const arr = arrLinksValidate.map((obj) =>
+        axios
+            .get(obj.href)
+            .then((response) => {
+                return {
+                    ...obj,
+                    status: response.status,
+                    message: response.statusText,
+                };
+            })
+            .catch(() => ({
+                ...obj,
+                status: 404,
+                message: 'FAIL',
+            }))
+    );
+    return Promise.all(arr);
+};
 
 module.exports = {
     validatePath,
@@ -144,7 +175,7 @@ module.exports = {
     readFiles,
     solveToAbsolute,
     validateDirectory,
-    getAllFiles,
-    searchLinks,
+    /*  getAllFiles,
+     searchLinks, */
     validateLinks
 };
