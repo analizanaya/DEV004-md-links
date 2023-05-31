@@ -1,16 +1,16 @@
-/* const mdLinksCLI = require('./index.js');
-mdLinksCLI('./readme/README.md').then((resultado) => {
-    console.log(resultado);
-})
-    .catch((error) => {
-        console.log(error)
-    }); */
 
 const mdLinksCLI = require('./index.js');
-mdLinksCLI('./readme/README.md', { validate: true })
-    .then((links) => {
-        // Hacer algo con los enlaces
+
+const path = './readme/README.md';
+const options = {
+    validate: true, // Activar validación de los links
+    stats: true, // Activar estadísticas de los links
+};
+
+mdLinksCLI(path, options)
+    .then((result) => {
+        console.log(result);
     })
     .catch((error) => {
-        // Manejar el error
+        console.error(error);
     });

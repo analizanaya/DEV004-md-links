@@ -2,7 +2,6 @@ const utils = require('./utils.js');
 
 const mdLinks = (path, options) => {
   return new Promise((resolve, reject) => {
-    console.log(path);
     utils.validatePath(path)
       .then((isValid) => {
         console.log(isValid);
@@ -41,9 +40,6 @@ const mdLinks = (path, options) => {
           reject('Invalid file path or file extension');
         }
       })
-      .catch((error) => {
-        reject(error);
-      });
   });
 };
 
