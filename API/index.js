@@ -8,50 +8,42 @@ const mdLinks = (path, options) => {
       .then((isValid) => {
         console.log(isValid);
 
-        const rutaAbsoluta = utils.solveToAbsolute(path);
-        console.log("rutaAbsoluta: ", rutaAbsoluta)
+        const absolutePath = utils.solveToAbsolute(path);
+        console.log("absolutePath: ", absolutePath)
 
 
-        /* utils.validateDirectory(rutaAbsoluta)
-          .then((directoryExist) => {
-            console.log(directoryExist); */
+        utils.validateDirectory(absolutePath)
+          .then((directoryContent) => {
+            console.log("Directory content:", directoryContent);
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
 
-        if (utils.isFile(rutaAbsoluta) && utils.isMdFile(rutaAbsoluta)) {
-          utils.readFiles(rutaAbsoluta)
+
+        if (utils.isFile(absolutePath) && utils.isMdFile(absolutePath)) {
+          utils.readFiles(absolutePath)
             .then((fileContent) => {
               console.log("File content:", fileContent);
-
               resolve();
             })
             .catch((error) => {
               reject(error);
             });
-        } /* else if (!directoryExist) {
-          reject('Directory does not exist');
-
-        } */
+        }
         else {
           reject('Invalid file path or file extension');
         }
-
-        const directory = utils.readDir(path);
-
-        if (directory.length === 0) {
-          reject('Empty directory');
-
-        }
-        //poner en else linea 22
-
-
       })
       .catch((error) => {
         reject(error);
       });
   })
-  /*  .catch((error) => {
-     reject(error);
-   }); */
+
 };
+
+
 
 
 module.exports = mdLinks;

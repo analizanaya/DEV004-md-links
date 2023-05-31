@@ -1,6 +1,5 @@
 {
   "name": "md-links",
- 
   "version": "0.1.0",
   "engines": {
     "node": ">=16.x"
@@ -24,6 +23,7 @@
   },
   "dependencies": {
     "@babel/preset-env": "^7.21.5",
+    "axios": "^1.4.0",
     "markdown-link-extractor": "^3.1.0"
   }
 }
