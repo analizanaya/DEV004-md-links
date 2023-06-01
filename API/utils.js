@@ -61,24 +61,32 @@ const readFiles = (path) => {
     });
 };
 
-const validateLinks = (arrLinksValidate) => {
-    const arr = arrLinksValidate.map((obj) =>
-        axios
-            .get(obj.href)
-            .then((response) => {
+const validateLinks = (url, file, text) => {
+    //console.log(url);
+    return fetch(url)
+        .then(response => {
+            const finalUrl = response.url;
+            if (response.ok) {
                 return {
-                    ...obj,
+                    url: url,
                     status: response.status,
-                    message: response.statusText,
+                    statusText: response.statusText,
+                    file: file,
+                    text: text,
                 };
-            })
-            .catch(() => ({
-                ...obj,
+            } else {
+                throw new Error(`Not found ${finalUrl}`)
+            }
+        })
+        .catch((error) => {
+            const failedLink = {
+                url: url,
                 status: 404,
                 message: 'FAIL',
-            }))
-    );
-    return Promise.all(arr);
+            };
+            console.error(error);
+            return failedLink;
+        })
 };
 
 

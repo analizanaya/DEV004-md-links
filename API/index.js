@@ -8,24 +8,28 @@ const mdLinks = (path, options) => {
 
         if (utils.isFile(absolutePath) && utils.isMdFile(absolutePath)) {
           utils.readFiles(absolutePath)
-            .then((fileContent) => {
-              const links = fileContent.map((match) => {
-                const regex = /\[(.*)\]\(((?!#).+)\)/i;
-                const [, text, href] = match.match(regex);
-                return {
-                  href,
-                  text,
-                  file: absolutePath,
-                };
-              });
-
+            .then((links) => {
               if (options.validate && options.stats) {
-                validateAndStats(links, resolve, reject);
-              } else if (options.validate) {
-                validate(links, resolve, reject);
-              } else if (options.stats) {
-                getStats(links, resolve, reject);
-              } else {
+                const results = {
+                  Total: totalLinks(links),
+                  Unique: getUniqueLinks(links),
+                  Broken: totalBrokenLinks(links),
+                }
+                resolve(results);
+              }
+              else if (options.stats) {
+                const results = {
+                  Total: totalLinks(links),
+                  Unique: getUniqueLinks(links),
+                }
+                resolve(results);
+              }
+              else if (options.validate) {
+                const arrPromises = links.map((link) => {
+                  return utils.validateLinks(link.url,)
+                })
+              }
+              else {
                 resolve({ links });
               }
             })
