@@ -1,4 +1,5 @@
 const utils = require('./utils.js');
+const getUniqueLinks = require('./utils.js');
 
 const mdLinks = (path, options) => {
   return new Promise((resolve, reject) => {
@@ -26,8 +27,8 @@ const mdLinks = (path, options) => {
               }
               else if (options.validate) {
                 const arrPromises = links.map((link) => {
-                  return utils.validateLinks(link.url,)
-                })
+                  return utils.validateLinks(link.url, link.file, link.text);
+                });
               }
               else {
                 resolve({ links });

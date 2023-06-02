@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const axios = require('axios');
+const fetch = require('cross-fetch').default;
 
 // Convertir a ruta absoluta
 const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
@@ -56,13 +56,21 @@ const readFiles = (path) => {
             }
             const regex = /\[(.*)\]\(((?!#).+)\)/gi;
             const matches = data.match(regex);
-            resolve(matches || []);
+
+            const links = matches.map((match) => {
+                const linkRegex = /\[(.*)\]\(((?!#).+)\)/i;
+                const [, text, url] = linkRegex.exec(match);
+                const absoluteUrl = new URL(url, `file://${path}`).href; // Convertir URL relativa a absoluta
+                return { text, url: absoluteUrl, file: path };
+            });
+
+            resolve(links);
         });
     });
 };
 
 const validateLinks = (url, file, text) => {
-    //console.log(url);
+    console.log(url);
     return fetch(url)
         .then(response => {
             const finalUrl = response.url;
