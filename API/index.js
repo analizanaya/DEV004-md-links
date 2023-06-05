@@ -1,36 +1,39 @@
+const { logPlugin } = require('@babel/preset-env/lib/debug.js');
 const utils = require('./utils.js');
-const getUniqueLinks = require('./utils.js');
 
 const mdLinks = (path, options) => {
+  console.log(options)
   return new Promise((resolve, reject) => {
     utils.validatePath(path)
       .then((isValid) => {
         const absolutePath = utils.solveToAbsolute(path);
-
+        console.log("0")
         if (utils.isFile(absolutePath) && utils.isMdFile(absolutePath)) {
           utils.readFiles(absolutePath)
-            .then((links) => {
+            .then((fileContent) => {
+              const links = fileContent.map((match) => {
+                const regex = /\[(.*)\]\(((?!#).+)\)/i;
+                const [, text, href] = match.match(regex);
+                return {
+                  href,
+                  text,
+                  file: absolutePath,
+                };
+              });
+
               if (options.validate && options.stats) {
-                const results = {
-                  Total: totalLinks(links),
-                  Unique: getUniqueLinks(links),
-                  Broken: totalBrokenLinks(links),
-                }
-                resolve(results);
-              }
-              else if (options.stats) {
-                const results = {
-                  Total: totalLinks(links),
-                  Unique: getUniqueLinks(links),
-                }
-                resolve(results);
-              }
-              else if (options.validate) {
-                const arrPromises = links.map((link) => {
-                  return utils.validateLinks(link.url, link.file, link.text);
-                });
-              }
-              else {
+                validateAndStats(links, resolve, reject);
+                console.log("1")
+                //validateAndStats(links)
+                // .then((res) => resolve(res))
+              } else if (options.validate) {
+                console.log("2")
+                validate(links, resolve, reject);
+              } else if (options.stats) {
+                console.log("3")
+                getStats(links, resolve, reject);
+              } else {
+                console.log("4")
                 resolve({ links });
               }
             })
@@ -48,6 +51,8 @@ const mdLinks = (path, options) => {
 };
 
 const validateAndStats = (links, resolve, reject) => {
+  //return new Promise
+  //cuando ya tengo todo resolve
   utils.validateLinks(links)
     .then((result) => {
       const stats = getStats(result);
@@ -69,12 +74,12 @@ const validate = (links, resolve, reject) => {
     });
 };
 
-const getStats = (links) => {
+const getStats = (links, resolve, reject) => {
   const stats = {
     total: links.length,
     unique: utils.getUniqueLinks(links).length,
   };
-  return stats;
+  resolve(stats);
 };
 
 module.exports = mdLinks;

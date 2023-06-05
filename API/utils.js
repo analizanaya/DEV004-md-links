@@ -1,10 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-const fetch = require('cross-fetch').default;
+const axios = require('axios');
 
-// Convertir a ruta absoluta
-const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
-
+//Validar si la ruta existe
 const validatePath = (route) => {
     //retrna una promesa
     return new Promise((resolve, reject) => {
@@ -18,6 +16,9 @@ const validatePath = (route) => {
         })
     });
 };
+
+// Convertir a ruta absoluta
+const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
 
 const validateDirectory = (route) => {
     return new Promise((resolve, reject) => {
@@ -56,45 +57,29 @@ const readFiles = (path) => {
             }
             const regex = /\[(.*)\]\(((?!#).+)\)/gi;
             const matches = data.match(regex);
-
-            const links = matches.map((match) => {
-                const linkRegex = /\[(.*)\]\(((?!#).+)\)/i;
-                const [, text, url] = linkRegex.exec(match);
-                const absoluteUrl = new URL(url, `file://${path}`).href; // Convertir URL relativa a absoluta
-                return { text, url: absoluteUrl, file: path };
-            });
-
-            resolve(links);
+            resolve(matches || []);
         });
     });
 };
 
-const validateLinks = (url, file, text) => {
-    console.log(url);
-    return fetch(url)
-        .then(response => {
-            const finalUrl = response.url;
-            if (response.ok) {
+const validateLinks = (arrLinksValidate) => {
+    const arr = arrLinksValidate.map((obj) =>
+        axios
+            .get(obj.href)
+            .then((response) => {
                 return {
-                    url: url,
+                    ...obj,
                     status: response.status,
-                    statusText: response.statusText,
-                    file: file,
-                    text: text,
+                    message: response.statusText,
                 };
-            } else {
-                throw new Error(`Not found ${finalUrl}`)
-            }
-        })
-        .catch((error) => {
-            const failedLink = {
-                url: url,
+            })
+            .catch(() => ({
+                ...obj,
                 status: 404,
                 message: 'FAIL',
-            };
-            console.error(error);
-            return failedLink;
-        })
+            }))
+    );
+    return Promise.all(arr);
 };
 
 
