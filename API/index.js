@@ -25,7 +25,7 @@ const mdLinks = (path, options) => {
               } else if (options.validate) {
                 validate(links, resolve, reject);
               } else if (options.stats) {
-                getStats(links, resolve);
+                getStats(links, resolve, reject);
               } else {
                 resolve({ links });
               }
@@ -46,7 +46,11 @@ const mdLinks = (path, options) => {
 const validateAndStats = (links, resolve, reject) => {
   utils.validateLinks(links)
     .then((result) => {
-      const stats = getStats(result);
+      //const stats = getStats(result);
+      const stats = {
+        total: links.length,
+        unique: utils.getUniqueLinks(links).length,
+      };
       const brokenLinks = result.filter(link => link.status !== 200);
       resolve({ links: result, stats, broken: brokenLinks.length });
     })
@@ -65,7 +69,7 @@ const validate = (links, resolve, reject) => {
     });
 };
 
-const getStats = (links, resolve) => {
+const getStats = (links, resolve, reject) => {
   const stats = {
     total: links.length,
     unique: utils.getUniqueLinks(links).length,
