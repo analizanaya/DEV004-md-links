@@ -8,7 +8,6 @@ const options = {
     stats: process.argv.includes('--stats'),
     validateAndStats: process.argv.includes('--stats') && process.argv.includes('--validate'),
 };
-// console.log({ options });
 
 if (process.argv.length < 3 || commandPath === undefined) {
     console.log('Invalid path or does not exist');
@@ -24,11 +23,10 @@ if (process.argv.length < 3 || commandPath === undefined) {
                 console.log('\nBroken: ');
             } else if (options.stats) {
                 console.log('\nStats: ');
-                console.log('\nTotal: ');
-                console.log('\nUnique: ');
+                console.log('\nTotal: ', (result.total));
+                console.log('\nUnique: ', (result.unique));
             } else {
                 console.log('\nLinks Validate: ');
-                //console.log(result);
                 result.links.forEach((link) => {
                     console.log(link);
                 });

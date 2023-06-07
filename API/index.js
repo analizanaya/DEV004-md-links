@@ -7,7 +7,6 @@ const mdLinks = (path, options) => {
     utils.validatePath(path)
       .then((isValid) => {
         const absolutePath = utils.solveToAbsolute(path);
-        console.log("0")
         if (utils.isFile(absolutePath) && utils.isMdFile(absolutePath)) {
           utils.readFiles(absolutePath)
             .then((fileContent) => {
@@ -23,17 +22,13 @@ const mdLinks = (path, options) => {
 
               if (options.validate && options.stats) {
                 validateAndStats(links, resolve, reject);
-                console.log("1")
                 //validateAndStats(links)
                 // .then((res) => resolve(res))
               } else if (options.validate) {
-                console.log("2")
-                validate(links, resolve, reject);
+                validate(links);
               } else if (options.stats) {
-                console.log("3")
                 getStats(links, resolve, reject);
               } else {
-                console.log("4")
                 resolve({ links });
               }
             })
@@ -51,8 +46,6 @@ const mdLinks = (path, options) => {
 };
 
 const validateAndStats = (links, resolve, reject) => {
-  //return new Promise
-  //cuando ya tengo todo resolve
   utils.validateLinks(links)
     .then((result) => {
       const stats = getStats(result);
@@ -74,7 +67,7 @@ const validate = (links, resolve, reject) => {
     });
 };
 
-const getStats = (links, resolve, reject) => {
+const getStats = (links, resolve) => {
   const stats = {
     total: links.length,
     unique: utils.getUniqueLinks(links).length,
