@@ -22,12 +22,10 @@ const mdLinks = (path, options) => {
 
               if (options.validate && options.stats) {
                 validateAndStats(links, resolve, reject);
-                //validateAndStats(links)
-                // .then((res) => resolve(res))
               } else if (options.validate) {
-                validate(links);
+                validate(links, resolve, reject);
               } else if (options.stats) {
-                getStats(links, resolve, reject);
+                getStats(links, resolve);
               } else {
                 resolve({ links });
               }

@@ -18,9 +18,9 @@ if (process.argv.length < 3 || commandPath === undefined) {
             console.log({ result })
             if (options.validateAndStats) {
                 console.log('\nStats & Validate: ');
-                console.log('\nTotal: ');
-                console.log('\nUnique: ');
-                console.log('\nBroken: ');
+                console.log('\nTotal: ', result.stats.total);
+                console.log('\nUnique: ', result.stats.unique);
+                console.log('\nBroken: ', result.broken);
             } else if (options.stats) {
                 console.log('\nStats: ');
                 console.log('\nTotal: ', (result.total));
