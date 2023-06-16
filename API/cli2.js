@@ -4,6 +4,7 @@ const process = require('process');
 
 const commandPath = process.argv[2];
 const options = {
+    help: process.argv.includes('--help'),
     validate: process.argv.includes('--validate'),
     stats: process.argv.includes('--stats'),
     validateAndStats: process.argv.includes('--stats') && process.argv.includes('--validate'),
@@ -16,12 +17,18 @@ if (process.argv.length < 3 || commandPath === undefined) {
     mdLinksCLI(commandPath, options)
         .then((result) => {
             console.log({ result })
-            if (options.validateAndStats) {
+            if (options.help) {
+                console.log('\nHelp: ');
+                console.log('\n--Validate: Sirve para...');
+                console.log('\n--Stats: Sirve para...');
+                console.log('\n--Validate --Stats: Sirve para...');
+            } else if (options.validateAndStats) {
                 console.log('\nStats & Validate: ');
                 console.log('\nTotal: ', result.stats.total);
                 console.log('\nUnique: ', result.stats.unique);
                 console.log('\nBroken: ', result.broken);
             } else if (options.stats) {
+                --
                 console.log('\nStats: ');
                 console.log('\nTotal: ', (result.total));
                 console.log('\nUnique: ', (result.unique));

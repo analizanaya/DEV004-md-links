@@ -18,7 +18,7 @@ const validatePath = (route) => {
 };
 
 // Convertir a ruta absoluta
-const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route));
+const solveToAbsolute = (route) => (path.isAbsolute(route) ? route : path.resolve(route)); //operador ternario
 
 const validateDirectory = (route) => {
     return new Promise((resolve, reject) => {

@@ -46,7 +46,6 @@ const mdLinks = (path, options) => {
 const validateAndStats = (links, resolve, reject) => {
   utils.validateLinks(links)
     .then((result) => {
-      //const stats = getStats(result);
       const stats = {
         total: links.length,
         unique: utils.getUniqueLinks(links).length,
